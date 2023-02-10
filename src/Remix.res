@@ -1,7 +1,7 @@
 @val external process: 'a = "process"
 
 module RemixBrowser = {
-  @module("remix") @react.component external make: unit => React.element = "RemixBrowser"
+  @module("@remix-run/react") @react.component external make: unit => React.element = "RemixBrowser"
 }
 
 type entryContext
@@ -107,10 +107,12 @@ module Session = {
 module SessionStorage = {
   type t
 
-  @module("remix")
+  @module("@remix-run/node")
   external getSession: (~cookieHeader: string=?) => Js.Promise.t<Session.t> = "getSession"
-  @module("remix") external commitSession: Session.t => Js.Promise.t<string> = "commitSession"
-  @module("remix") external destroySession: Session.t => Js.Promise.t<string> = "destroySession"
+  @module("@remix-run/node")
+  external commitSession: Session.t => Js.Promise.t<string> = "commitSession"
+  @module("@remix-run/node")
+  external destroySession: Session.t => Js.Promise.t<string> = "destroySession"
 }
 
 module CreateFetcherSubmitOptions = {
@@ -140,7 +142,7 @@ module Fetcher = {
   @get external data: t => 'data = "data"
 
   module Form = {
-    @module("remix") @react.component
+    @module("@remix-run/react") @react.component
     external make: (
       ~children: React.element,
       ~method: [#get | #post | #put | #patch | #delete]=?,
@@ -169,9 +171,9 @@ module Transition = {
   @get external state: t => 'state = "state"
 }
 
-@module("remix") external json: {..} => Webapi.Fetch.Response.t = "json"
+@module("@remix-run/node") external json: {..} => Webapi.Fetch.Response.t = "json"
 
-@module("remix") external redirect: string => Webapi.Fetch.Response.t = "redirect"
+@module("@remix-run/node") external redirect: string => Webapi.Fetch.Response.t = "redirect"
 
 @module("@remix-run/react")
 external useBeforeUnload: (@uncurry unit => unit) => unit = "useBeforeUnload"
@@ -197,7 +199,7 @@ module Cookie = {
   @get external isSigned: t => bool = "isSigned"
   @get @return(undefined_to_opt) external expires: t => option<Js.Date.t> = "isSigned"
   @send external serialize: (t, {..}) => Js.Promise.t<string> = "serialize"
-  @module("remix") external isCookie: 'a => bool = "isCookie"
+  @module("@remix-run/node") external isCookie: 'a => bool = "isCookie"
 
   type parseOptions = {decode: string => string}
   @send external parse: (t, option<string>) => {..} = "parse"
@@ -223,8 +225,8 @@ module CreateCookieOptions = {
   ) => t = ""
 }
 
-@module("remix") external createCookie: string => Cookie.t = "createCookie"
-@module("remix")
+@module("@remix-run/node") external createCookie: string => Cookie.t = "createCookie"
+@module("@remix-run/node")
 external createCookieWithOptions: (string, CreateCookieOptions.t) => Cookie.t = "createCookie"
 
 module CreateCookieSessionStorageOptions = {
@@ -233,10 +235,10 @@ module CreateCookieSessionStorageOptions = {
   @obj external make: (~cookie: Cookie.t) => t = ""
 }
 
-@module("remix")
+@module("@remix-run/node")
 external createCookieSessionStorage: unit => SessionStorage.t = "createCookieSessionStorage"
 
-@module("remix")
+@module("@remix-run/node")
 external createCookieSessionStorageWithOptions: (
   ~options: CreateCookieSessionStorageOptions.t,
 ) => SessionStorage.t = "createCookieSessionStorage"
