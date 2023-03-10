@@ -19,11 +19,15 @@ type headersFunctionArgs = {
   parentHeaders: Webapi.Fetch.Headers.t,
   actionHeaders: Webapi.Fetch.Headers.t,
 }
+type deferredData<'a> = {data: 'a}
+
 type headersFunction = headersFunctionArgs => Webapi.Fetch.Headers.t
 
 type loaderFunction<'a> = dataFunctionArgs => Js.Promise.t<'a>
 
 type actionFunction<'a> = dataFunctionArgs => Js.Promise.t<'a>
+
+type deferredLoaderFunction<'a> = dataFunctionArgs => Js.Promise.t<deferredData<'a>>
 
 module RemixServer = {
   @module("@remix-run/react") @react.component
@@ -171,6 +175,16 @@ module Transition = {
   @get external state: t => 'state = "state"
 }
 
+module Await = {
+  type t
+  @react.component @module("@remix-run/react")
+  external make: (
+    ~resolve: Js.Promise.t<'a>,
+    ~children: 'a => React.element,
+    ~errorElement: React.element=?,
+  ) => React.element = "Await"
+}
+
 @module("@remix-run/node") external json: {..} => Webapi.Fetch.Response.t = "json"
 
 @module("@remix-run/node") external redirect: string => Webapi.Fetch.Response.t = "redirect"
@@ -191,6 +205,17 @@ external useBeforeUnload: (@uncurry unit => unit) => unit = "useBeforeUnload"
 @module("@remix-run/react") external useNavigate: unit => Navigate.t = "useNavigate"
 
 @module("@remix-run/react") external useTransition: unit => Transition.t = "useTransition"
+
+@module("@remix-run/react") external useAsyncValue: unit => 'a = "useAsyncValue"
+
+type routeMatch<'a, 'b> = {
+  id: string,
+  pathname: string,
+  params: Js.Dict.t<string>,
+  data: 'a,
+  handle: option<'b>,
+}
+@module("@remix-run/react") external useMatches: unit => array<routeMatch<'a, 'b>> = "useMatches"
 
 module Cookie = {
   type t
@@ -242,3 +267,5 @@ external createCookieSessionStorage: unit => SessionStorage.t = "createCookieSes
 external createCookieSessionStorageWithOptions: (
   ~options: CreateCookieSessionStorageOptions.t,
 ) => SessionStorage.t = "createCookieSessionStorage"
+
+@module("@remix-run/node") external defer: 'a => deferredData<'a> = "defer"
